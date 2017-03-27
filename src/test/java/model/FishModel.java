@@ -1,6 +1,6 @@
 package model;
 
-import sub.individual.decisiontree.annotation.Result;
+import sub.individual.annotation.Result;
 
 /**
  * Class FishModel.java

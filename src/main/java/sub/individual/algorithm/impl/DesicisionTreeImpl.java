@@ -1,11 +1,12 @@
-package sub.individual.decisiontree;
+package sub.individual.algorithm.impl;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sub.individual.decisiontree.annotation.Result;
+import sub.individual.algorithm.DesicisionTree;
+import sub.individual.annotation.Result;
 import sub.individual.util.ReflectionUtil;
 
 /**
@@ -17,28 +18,17 @@ import sub.individual.util.ReflectionUtil;
  */
 
 
-public class Calculator {
+public class DesicisionTreeImpl implements DesicisionTree{
 	
-	public static <T> double calcShannonEnt(List<T> dataset){
+	@Override
+	public <T> double calcShannonEnt(List<T> dataset){
 		if(dataset==null || dataset.isEmpty()){
 			return 0;
-		}
-		Class<?> clazz = dataset.get(0).getClass();
-		Field[] fields = clazz.getDeclaredFields();
-		int resultIndex = -1;
-		for(int index = 0 ; index<fields.length; index++){
-			if(fields[index].isAnnotationPresent(Result.class)){
-				resultIndex = index;
-				break;
-			}
-		}
-		if(resultIndex < 0){
-			throw new RuntimeException("No @Result Annotation found in "+dataset.getClass().getName());
 		}
 		Map<Object, Integer> labelCounts = new HashMap<>();		
 		try {			
 			for(T data:dataset){
-				Object value = ReflectionUtil.getFieldValue(data, fields[resultIndex].getName());				
+				Object value = ReflectionUtil.getValueByAnnotation(data, Result.class);				
 				if(labelCounts.containsKey(value)){
 					Integer count = labelCounts.get(value);
 					count++;
@@ -56,6 +46,22 @@ public class Calculator {
 			shannonEnt -= prob*Math.log(prob)/Math.log(2);
 		}
 		return shannonEnt;	
+	}
+
+	@Override
+	public <T> int bestFeatureTosplit(List<T> dataset) {
+		Class<?> clazz = dataset.get(0).getClass();
+		Field[] fields = clazz.getDeclaredFields();
+		double baseshannonEnt = calcShannonEnt(dataset);
+		double bestInfoGain = 0;
+		int bestFeature = -1;
+		for(int index = 0 ; index<fields.length; index++){
+			if(!fields[index].isAnnotationPresent(Result.class)){
+				
+				break;
+			}
+		}
+		return 0;
 	}
 
 }

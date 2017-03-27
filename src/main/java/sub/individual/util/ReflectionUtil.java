@@ -1,6 +1,7 @@
 package sub.individual.util;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -125,6 +126,19 @@ public class ReflectionUtil {
             return Object.class;
         }
         return (Class<?>) params[index];
+    }
+    
+    public static Object getValueByAnnotation(final Object object, final Class<? extends Annotation> annotationClass){
+    	Class<?> clazz = object.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+		int resultIndex = -1;
+		for(int index = 0 ; index<fields.length; index++){
+			if(fields[index].isAnnotationPresent(annotationClass)){
+				resultIndex = index;
+				break;
+			}
+		}
+		return resultIndex < 0 ? null : getFieldValue(object, fields[resultIndex].getName());
     }
  
 }

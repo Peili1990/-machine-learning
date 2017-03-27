@@ -1,4 +1,4 @@
-package sub.individual.decisiontree.annotation;
+package sub.individual.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
