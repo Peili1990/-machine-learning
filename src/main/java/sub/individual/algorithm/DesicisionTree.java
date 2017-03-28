@@ -14,6 +14,6 @@ public interface DesicisionTree {
 	
 	public <T> double calcShannonEnt(List<T> dataset);
 	
-	public <T> int bestFeatureTosplit(List<T> dataset);
+	public <T> Object majorityCnt(List<T> dataset);
 
 }

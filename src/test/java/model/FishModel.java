@@ -1,5 +1,6 @@
 package model;
 
+import sub.individual.annotation.Attribute;
 import sub.individual.annotation.Result;
 
 /**
@@ -12,8 +13,10 @@ import sub.individual.annotation.Result;
 
 public class FishModel {
 	
+	@Attribute
 	private Integer noSurfing;
 	
+	@Attribute
 	private Integer flippers;
 	
 	@Result

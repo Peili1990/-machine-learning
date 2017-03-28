@@ -24,13 +24,13 @@ public class CalcShannonEntTest {
 	@Test
 	public void calcShannonEntTest(){
 		List<FishModel> models = new ArrayList<>();
-		models.add(new FishModel(1, 1, "maybe"));
+		models.add(new FishModel(1, 1, "yes"));
 		models.add(new FishModel(1, 1, "yes"));
 		models.add(new FishModel(1, 0, "no"));
 		models.add(new FishModel(0, 1, "no"));
 		models.add(new FishModel(0, 1, "no"));
 		
-		System.out.println(tree.calcShannonEnt(models));
+		System.out.println(tree.majorityCnt(models));
 	}
 	
 

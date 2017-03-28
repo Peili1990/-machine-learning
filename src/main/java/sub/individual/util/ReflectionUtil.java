@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
  
 /**
  * 反射的Utils函数集合. 提供访问私有变量,获取泛型类型Class,提取集合中元素的属性等Utils函数.
@@ -129,16 +131,23 @@ public class ReflectionUtil {
     }
     
     public static Object getValueByAnnotation(final Object object, final Class<? extends Annotation> annotationClass){
+    	List<String> fields = getFieldsByAnnotation(object, annotationClass);
+    	if(fields.size() != 1){
+    		throw new RuntimeException(annotationClass.getName() + "annotation is not unique in " + object.getClass());
+    	}
+		return getFieldValue(object, fields.get(0));
+    }
+    
+    public static List<String> getFieldsByAnnotation(final Object object, final Class<? extends Annotation> annotationClass){
     	Class<?> clazz = object.getClass();
 		Field[] fields = clazz.getDeclaredFields();
-		int resultIndex = -1;
-		for(int index = 0 ; index<fields.length; index++){
-			if(fields[index].isAnnotationPresent(annotationClass)){
-				resultIndex = index;
-				break;
+		List<String> targets = new ArrayList<>();
+		for(Field field:fields){
+			if(field.isAnnotationPresent(annotationClass)){
+				targets.add(field.getName());
 			}
 		}
-		return resultIndex < 0 ? null : getFieldValue(object, fields[resultIndex].getName());
+		return targets;
     }
  
 }
