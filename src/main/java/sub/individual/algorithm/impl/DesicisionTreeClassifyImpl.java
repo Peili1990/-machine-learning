@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sub.individual.algorithm.DesicisionTree;
+import sub.individual.algorithm.DesicisionTreeClassify;
 import sub.individual.annotation.Attribute;
 import sub.individual.annotation.Result;
-import sub.individual.model.TreeModel;
+import sub.individual.model.decisionTree.BestFeatureModel;
+import sub.individual.model.decisionTree.TreeModel;
 import sub.individual.util.ReflectionUtil;
 
 /**
@@ -20,7 +21,7 @@ import sub.individual.util.ReflectionUtil;
  */
 
 
-public class DesicisionTreeImpl implements DesicisionTree{
+public class DesicisionTreeClassifyImpl implements DesicisionTreeClassify{
 	
 	@Override
 	public <T> double calcShannonEnt(List<T> dataset){			
@@ -57,10 +58,10 @@ public class DesicisionTreeImpl implements DesicisionTree{
 		return this.createTree(dataset, ReflectionUtil.getFieldsByAnnotation(dataset.get(0), Attribute.class));
 	}
 
-	private <T> String bestFeatureTosplit(List<T> dataset, List<String> labels) {
+	private <T> BestFeatureModel<T> bestFeatureTosplit(List<T> dataset, List<String> labels) {
 		double baseshannonEnt = calcShannonEnt(dataset);
 		double bestInfoGain = 0;
-		int bestFeature = -1;
+		BestFeatureModel<T> bestFeature = new BestFeatureModel<>();
 		for(int index = 0 ; index<labels.size(); index++){
 			double newEntropy = 0;
 			Map<Object,List<T>> subDataSet = splitDataSet(dataset, labels.get(index));
@@ -68,12 +69,13 @@ public class DesicisionTreeImpl implements DesicisionTree{
 				double prob = (double)subDataSet.get(obj).size()/dataset.size();
 				newEntropy += prob * calcShannonEnt(subDataSet.get(obj));
 			}			
-			if(baseshannonEnt - newEntropy > bestInfoGain){
+			if(baseshannonEnt - newEntropy >= bestInfoGain){
 				bestInfoGain = baseshannonEnt - newEntropy;
-				bestFeature = index;
+				bestFeature.setFeature(labels.get(index));
+				bestFeature.setSubList(subDataSet);
 			}
 		}
-		return labels.get(bestFeature);
+		return bestFeature;
 	}
 	
 	private <T> Map<Object, Integer> valueCount(List<T> dataset){
@@ -107,14 +109,14 @@ public class DesicisionTreeImpl implements DesicisionTree{
 	
 	private <T> TreeModel createTree(List<T> dataset,List<String> labels){
 		TreeModel treeModel = new TreeModel();
-		if(calcShannonEnt(dataset) == 0 || labels.isEmpty()){
+		if(labels.isEmpty() || calcShannonEnt(dataset) == 0){
 			treeModel.setLeaf(majorityCnt(dataset));
 			return treeModel;
 		}
-		String bestFeature = labels.size() == 1 ? labels.get(0) : bestFeatureTosplit(dataset, labels);
-		treeModel.setRoot(bestFeature);
+		BestFeatureModel<T> bestFeature = bestFeatureTosplit(dataset, labels);
+		treeModel.setRoot(bestFeature.getFeature());
 		Map<Object, TreeModel> branch = new HashMap<>();
-		Map<Object, List<T>> subDataSet = splitDataSet(dataset, bestFeature);
+		Map<Object, List<T>> subDataSet = bestFeature.getSubList();
 		List<String> newLabels = new ArrayList<>(labels);
 		newLabels.remove(bestFeature);		
 		for(Object value : subDataSet.keySet()){

@@ -9,9 +9,9 @@
   <url>http://maven.apache.org</url>
   <dependencies>
 	<dependency>
-	    <groupId>gov.nist.math</groupId>
-	    <artifactId>jama</artifactId>
-	    <version>1.0.3</version>
+	  	<groupId>org.ujmp</groupId>
+	  	<artifactId>ujmp-vecmath</artifactId>
+	  	<version>0.3.0</version>
 	</dependency>
 	<dependency>
         <groupId>com.alibaba</groupId>

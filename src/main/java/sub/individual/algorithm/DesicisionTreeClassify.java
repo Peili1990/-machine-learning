@@ -2,7 +2,7 @@ package sub.individual.algorithm;
 
 import java.util.List;
 
-import sub.individual.model.TreeModel;
+import sub.individual.model.decisionTree.TreeModel;
 
 /**
  * Class DesicisionTree.java
@@ -12,7 +12,7 @@ import sub.individual.model.TreeModel;
  * @Date 2017年3月27日
  */
 
-public interface DesicisionTree {
+public interface DesicisionTreeClassify {
 	
 	public <T> double calcShannonEnt(List<T> dataset);
 	

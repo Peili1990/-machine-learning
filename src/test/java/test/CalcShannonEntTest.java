@@ -9,8 +9,8 @@ import com.alibaba.fastjson.JSON;
 
 import model.FishModel;
 import model.WeatherModel;
-import sub.individual.algorithm.DesicisionTree;
-import sub.individual.algorithm.impl.DesicisionTreeImpl;
+import sub.individual.algorithm.DesicisionTreeClassify;
+import sub.individual.algorithm.impl.DesicisionTreeClassifyImpl;
 
 /**
  * Class CalcShannonEntTest.java
@@ -22,7 +22,7 @@ import sub.individual.algorithm.impl.DesicisionTreeImpl;
 
 public class CalcShannonEntTest {
 	
-	DesicisionTree tree = new DesicisionTreeImpl();
+	DesicisionTreeClassify tree = new DesicisionTreeClassifyImpl();
 	
 	@Test
 	public void calcShannonEntTest(){
@@ -36,6 +36,7 @@ public class CalcShannonEntTest {
 		System.out.println(JSON.toJSONString(tree.createTree(models)));
 		
 		System.out.println(tree.createTree(models).toString());
+		
 	}
 	
 	@Test

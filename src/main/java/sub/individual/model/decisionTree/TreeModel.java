@@ -1,4 +1,4 @@
-package sub.individual.model;
+package sub.individual.model.decisionTree;
 
 import java.util.Map;
 
