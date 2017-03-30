@@ -1,7 +1,6 @@
 package sub.individual.algorithm.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,7 @@ import java.util.Map;
 import sub.individual.algorithm.DesicisionTree;
 import sub.individual.annotation.Attribute;
 import sub.individual.annotation.Result;
+import sub.individual.model.TreeModel;
 import sub.individual.util.ReflectionUtil;
 
 /**
@@ -32,6 +32,29 @@ public class DesicisionTreeImpl implements DesicisionTree{
 			shannonEnt -= prob*Math.log(prob)/Math.log(2);
 		}
 		return shannonEnt;	
+	}
+	
+	@Override
+	public <T> Object majorityCnt(List<T> dataset) {
+		Map<Object, Integer> valueCount = valueCount(dataset);
+		if(valueCount == null) return null;
+		Integer maxNum = 0;
+		Object target = null;
+		for(Object value : valueCount.keySet()){
+			if(valueCount.get(value) > maxNum){
+				maxNum = valueCount.get(value);
+				target = value;
+			}
+		}
+		return target;
+	}
+
+	@Override
+	public <T> TreeModel createTree(List<T> dataset) {
+		if(dataset==null || dataset.isEmpty()){
+			return null;
+		}
+		return this.createTree(dataset, ReflectionUtil.getFieldsByAnnotation(dataset.get(0), Attribute.class));
 	}
 
 	private <T> String bestFeatureTosplit(List<T> dataset, List<String> labels) {
@@ -81,20 +104,24 @@ public class DesicisionTreeImpl implements DesicisionTree{
 		}
 		return category;
 	}
-
-	@Override
-	public <T> Object majorityCnt(List<T> dataset) {
-		Map<Object, Integer> valueCount = valueCount(dataset);
-		if(valueCount == null) return null;
-		Integer maxNum = 0;
-		Object target = null;
-		for(Object value : valueCount.keySet()){
-			if(valueCount.get(value) > maxNum){
-				maxNum = valueCount.get(value);
-				target = value;
-			}
+	
+	private <T> TreeModel createTree(List<T> dataset,List<String> labels){
+		TreeModel treeModel = new TreeModel();
+		if(calcShannonEnt(dataset) == 0 || labels.isEmpty()){
+			treeModel.setLeaf(majorityCnt(dataset));
+			return treeModel;
 		}
-		return target;
-	}
+		String bestFeature = labels.size() == 1 ? labels.get(0) : bestFeatureTosplit(dataset, labels);
+		treeModel.setRoot(bestFeature);
+		Map<Object, TreeModel> branch = new HashMap<>();
+		Map<Object, List<T>> subDataSet = splitDataSet(dataset, bestFeature);
+		List<String> newLabels = new ArrayList<>(labels);
+		newLabels.remove(bestFeature);		
+		for(Object value : subDataSet.keySet()){
+			branch.put(value, createTree(subDataSet.get(value), newLabels));
+		}
+		treeModel.setBranch(branch);
+		return treeModel;
+	}	
 
 }

@@ -2,6 +2,8 @@ package sub.individual.algorithm;
 
 import java.util.List;
 
+import sub.individual.model.TreeModel;
+
 /**
  * Class DesicisionTree.java
  *
@@ -15,5 +17,7 @@ public interface DesicisionTree {
 	public <T> double calcShannonEnt(List<T> dataset);
 	
 	public <T> Object majorityCnt(List<T> dataset);
+	
+	public <T> TreeModel createTree(List<T> dataset); 
 
 }
